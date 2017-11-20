@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'channels',
+    #'push_notifications',
 ]
 
 MIDDLEWARE = [
@@ -96,6 +97,18 @@ DATABASES = {
         'NAME': DATABASE_PATH,
     }
 }
+
+# push notification plugin settings
+"""
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "FCM_API_KEY": "[your api key]",
+        "GCM_API_KEY": "[your api key]",
+        "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
+        "APNS_TOPIC": "com.example.push_test",
+        "WNS_PACKAGE_SECURITY_ID": "[your package security id, e.g: 'ms-app://e-3-4-6234...']",
+        "WNS_SECRET_KEY": "[your app secret key, e.g.: 'KDiejnLKDUWodsjmewuSZkk']",
+}
+"""
 
 
 # Password algorithms
@@ -143,6 +156,9 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# expiry of user sessions in seconds (1 year)
+SESSION_COOKIE_AGE = 31536000
 
 # store token in session data instead of getting from cookie each request
 CSRF_USE_SESSIONS = True

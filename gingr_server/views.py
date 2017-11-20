@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.utils.html import escape
 
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -19,7 +19,7 @@ class Login:
 	# login an existing user
 	@csrf_exempt
 	def login(request):
-		#decode data
+		# decode data
 		data = json.loads(request.body.decode('utf-8'))
 
 		email = escape(data['email'].lower())
@@ -29,16 +29,17 @@ class Login:
 		user_check = User.objects.get(email=email)
 		user_id = user_check.username
 
-		#authentciate with django auth
+		# authentciate with django auth
 		try:
 			user = authenticate(username=user_id, password=password)
 		except:
 			user = None
 
 		if user is not None:
-			# authenticated
+			# authenticated, login and respond
+			login(request, user)
 			response = {'status': 'correct',
-						'id': user_id};
+					'id': user_id};
 		else:
 			# not authenticated, email or password is incorrect
 			response = {'status': 'error'};
@@ -53,6 +54,7 @@ class Login:
 
 		email = escape(data['email'].lower())
 		password = escape(data['password'])
+		#password_again = escape(data['password2'])
 		first_name = escape(data['firstname'].title())
 		last_name = escape(data['lastname'].title())
 
@@ -68,7 +70,6 @@ class Login:
 
 		# generate a unique userID
 		user_id = str(uuid.uuid1())
-		print(type(user_id))
 		# make user object from django auth
 		user = User.objects.create_user(user_id, email, password)
 		user.first_name = first_name
@@ -85,9 +86,14 @@ class Login:
 		# save to db
 		user_profile.save()
 
-		# create response
-		response = {'status': 'success',
-					'id': user_id}
+		if user is not None:
+			# authenticated, login and respond
+			login(request, user)
+			response = {'status': 'success',
+						'id': user_id};
+		else:
+			# not authenticated, email or password is incorrect
+			response = {'status': 'error'};
 
 		# return response
 		return JsonResponse(response)
@@ -113,6 +119,16 @@ class Login:
 			response = {'status': 'error'}
 
 		return JsonResponse(response)
+
+	@csrf_exempt
+	def logout(request):
+		# check if user object is authenticated
+		if request.user.is_authenticated():
+			logout(request)
+			respond = {'status': 'success'}
+		else:
+			# if not, return error
+			response = {'status': 'denied'};
 
 	# recover a lost password
 	@csrf_exempt
