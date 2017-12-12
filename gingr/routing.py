@@ -1,5 +1,5 @@
 from channels.routing import route
-from gingr.consumers import ws_receive, ws_connect, ws_disconnect
+from gingr_server.consumers import ws_receive, ws_connect, ws_disconnect
 
 # websockets version of "urlpatterns"
 channel_routing = [

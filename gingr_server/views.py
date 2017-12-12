@@ -170,25 +170,27 @@ class Matches:
 			response = {'status': 'no-data'}
 			return JsonResponse(response)
 
-
+		# testing
 		print(user_lat)
 		print(user_long)
 		# preference calcs
 		min_dob = datetime.datetime.now() - datetime.timedelta(days=user_pref.max_age*365)
 		max_dob = datetime.datetime.now() - datetime.timedelta(days=user_pref.min_age*365)
 
+		# calc a rough maximum to minimise how many profiles are loaded, then calc exact distance later
 		max_latitude = user_lat + user_pref.max_distance
 		max_longitude = user_long + user_pref.max_distance
 
 		#distance = dist_between(0,50,0,51)
 		#print(distance)
 
-		# get next <limit> qualifying users from db, filter by preferences
-		all_users = UserProfile.objects.filter(dob__range=(min_dob, max_dob))
+		# get next <limit> qualifying users from db, filter by preferences, order by user_id
+		all_users = UserProfile.objects.filter(dob__range=(min_dob, max_dob)).order_by('user__username')[offset:limit]
 		# check against decision table
 		
 		# if okay, load photos
-		response = {'status': 'hello'}
+
+		response = {'status': 'success'}
 		return JsonResponse(response)
 
 	# load all matches for chat
@@ -230,17 +232,19 @@ class Chat:
 	# load all messages
 	@csrf_exempt
 	def get_messages(request):
-		pass
+
+		origin_user_id = escape(data['userID'])
+		match_id = escape(data['matchID'])
+
+		datetime.datetime.now(),
+
+
 
 	# send a new message
 	@csrf_exempt
 	def send_message(request):
 		pass
 
-	# check for new messages
-	@csrf_exempt
-	def check_messages(request):
-		pass
 
 class Settings:
 	@csrf_exempt

@@ -98,6 +98,28 @@ DATABASES = {
     }
 }
 
+
+# channel layer - daphne, change for production to redis or similar
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgiref.inmemory.ChannelLayer',
+        'ROUTING': 'gingr.routing.channel_routing',
+    },
+}
+# channel layer for websockets - redis bakcend on default port 6379
+"""
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+        'ROUTING': 'gingr.routing.channel_routing',
+    }
+}
+"""
+
+
 # push notification plugin settings
 """
 PUSH_NOTIFICATIONS_SETTINGS = {

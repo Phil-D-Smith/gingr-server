@@ -51,7 +51,7 @@ class Decision(models.Model):
 
 # successful matches
 class Match(models.Model):
-	match_id = models.AutoField(unique=True, primary_key=True)
+	match = models.AutoField(unique=True, primary_key=True)
 	user_id_1 = models.CharField(max_length=128)
 	user_id_2 = models.CharField(max_length=128)
 	date_time = models.DateField(auto_now=False, auto_now_add=False)
