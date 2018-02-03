@@ -66,7 +66,7 @@ class Match(models.Model):
 # all messages between all users
 class Message(models.Model):
 	message_id = models.AutoField(unique=True, primary_key=True)
-	match_id = models.ForeignKey(Match)
+	match_id = models.ForeignKey(Match, on_delete=models.CASCADE)
 	sender_id = models.CharField(max_length=128)
 	message_number = models.IntegerField()
 	date_time = models.DateField(auto_now=False, auto_now_add=False)

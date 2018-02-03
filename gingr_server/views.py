@@ -39,7 +39,7 @@ class Login:
 			# authenticated, login and respond
 			login(request, user)
 			response = {'status': 'correct',
-					'id': user_id};
+						'id': user_id};
 		else:
 			# not authenticated, email or password is incorrect
 			response = {'status': 'error'};

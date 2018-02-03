@@ -61,18 +61,21 @@ def ws_receive(message):
 		'data': message_data,
 	}
 
-	response = {
-		'uid': uid,
-		'status': 'success',
-	}
-
-	# send message to target
 	try:
-		Group('user-%s' % target_id).send('text': json.dumps(message))
-
-	
-	#reply with success message
-	message.reply_channel.send('text': json.dumps(response))
+		# send message to target
+		Group('user-%s' % target_id).send({'text': json.dumps(message)})
+		#reply with success message
+		response = {
+			'uid': uid,
+			'status': 'success',
+		}
+		message.reply_channel.send({'text': json.dumps(response)})
+	except:
+		response = {
+			'uid': uid,
+			'status': 'success',
+		}
+		message.reply_channel.send({'text': json.dumps(response)})
 
 # set up channel, add user to group
 @channel_session_user_from_http
