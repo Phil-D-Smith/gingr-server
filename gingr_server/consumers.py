@@ -11,9 +11,10 @@ def ws_receive(message):
 	# get data from json string
 	data = json.loads(message['text'])
 	# split into variables
-	sender_id = escape(data["senderID"])
-	match_id = escape(data["matchID"])
-	message_body = escape(data["messageBody"])
+	uid = str(uuid.uuid1()) # CHANGE THIS - SEND FROM CLIENT
+	sender_id = data["senderID"]
+	match_id = data["matchID"]
+	message_body = data["messageBody"]
 	target_id = 0
 
 	# get current date time
@@ -47,24 +48,31 @@ def ws_receive(message):
 	user_message.save()
 
 	# message array for response
-	message_data = {'dateTime': date_time,
-					'messageNumber': message_number,
-					'messageBody': message_body,
-					'senderID': sender_id}
+	message_data = {
+		'dateTime': date_time,
+		'messageNumber': message_number,
+		'messageBody': message_body,
+		'senderID': sender_id,
+	}
 
 	message = {
-		'text': json.dumps({
-			'action': 'message',
-			'data': message_data
-			})
-		}
+		'uid': uid,
+		'action': 'message',
+		'data': message_data,
+	}
 
-	# reply with success message
-	#message.reply_channel.send('hello')
+	response = {
+		'uid': uid,
+		'status': 'success',
+	}
 
 	# send message to target
-	Group('user-%s' % target_id).send(message)
+	try:
+		Group('user-%s' % target_id).send('text': json.dumps(message))
 
+	
+	#reply with success message
+	message.reply_channel.send('text': json.dumps(response))
 
 # set up channel, add user to group
 @channel_session_user_from_http
@@ -85,5 +93,6 @@ def ws_connect(message):
 @channel_session_user
 def ws_disconnect(message):
 	# broadcast and discard
-	Group('all-users').send({'text': 'removed user'})
+	#Group('all-users').send({'text': 'removed user'})
 	Group('all-users').discard(message.reply_channel)
+	Group('user-%s' % message.channel_session['user_id']).discard(message.reply_channel)
